@@ -10,7 +10,16 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $cafeBranches = CafeBranch::with('cafe')->get();
-        return view('user.dashboard', compact('cafeBranches'));
+        $search = $request->q;
+
+        $query = CafeBranch::when(trim($search), function ($q) use ($search) {
+            return $q->search($search);
+        }, function ($q) {
+            return $q->with('cafe');
+        });
+
+        return view('user.dashboard', [
+            'cafeBranches' => $query->get(),
+        ]);
     }
 }

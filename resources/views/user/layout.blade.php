@@ -3,7 +3,7 @@
 @section('body')
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-dark bg-info mb-3">
-      <a class="navbar-brand" href="#">{{ config('app.name', 'Laravel') }}</a>
+      <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name', 'Laravel') }}</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -11,7 +11,10 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link" href="{{ route('user.credit-history') }}">My Credit Logs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('user.reservation-history') }}">My Reservation Logs</a>
           </li>
         </ul>
         <ul class="navbar-nav ml-auto">
@@ -33,7 +36,7 @@
           <img class="card-img-top" src="{{ Auth::user()->display_photo }}" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">{{ Auth::user()->name }}</h4>
-            <h6 class="card-subtitle mb-3 text-success"><strong>1000</strong> credits remaining</h6>
+            <h6 class="card-subtitle mb-3 text-success"><strong>{{ Auth::user()->remainingCredits() }}</strong> credits remaining</h6>
             <ul class="list-unstyled">
               <li class="text-truncate"><i class="fa fa-phone-square fa-fw"></i> {{ Auth::user()->contact_number ?: 'n/a'  }}</li>
               <li class="text-truncate"><i class="fa fa-home fa-fw"></i> {{ Auth::user()->address ?: 'n/a'  }}</li>

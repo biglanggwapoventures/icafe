@@ -2,7 +2,9 @@
 
 namespace App;
 
+use App\CreditLog;
 use Auth;
+use DB;
 use Hash;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -42,5 +44,24 @@ class User extends Authenticatable
     public function is($role)
     {
         return strtolower($role) === $this->role;
+    }
+
+    public function cafeAdmin()
+    {
+        return $this->hasOne(CafeAdmin::class);
+    }
+
+    public function creditLogs()
+    {
+        return $this->hasMany(CreditLog::class, 'client_id');
+    }
+
+    public function remainingCredits()
+    {
+        if ($this->is('user')) {
+            return $this->creditLogs()->sum(DB::raw('credit - debit'));
+        }
+
+        return 0;
     }
 }

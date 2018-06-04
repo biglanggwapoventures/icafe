@@ -1,21 +1,21 @@
 @extends('user.layout')
 
 @section('content')
-{!! Form::open() !!}
+{!! Form::open(['url' => url()->current(), 'method' => 'GET']) !!}
 <div class="form-row">
     <div class="col-10">
         <div class="form-group">
-            {!! Form::text('q', null, ['class' => 'form-control-lg', 'placeholder' => 'Search for an internet cafe...']) !!}
+            {!! Form::text('q', request()->q, ['class' => 'form-control-lg', 'placeholder' => 'Search for an internet cafe...']) !!}
         </div>
     </div>
     <div class="col-2">
-        <button type="button" class="btn btn-lg btn-success btn-block"><i class="fa fa-search"></i> Go</button>
+        <button type="submit" class="btn btn-lg btn-success btn-block"><i class="fa fa-search"></i> Go</button>
     </div>
 </div>
 {!! Form::close() !!}
 <ul class="list-group">
     @forelse($cafeBranches as $branch)
-        <li href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="border-left:5px solid">
+        <li class="list-group-item list-group-item-action flex-column align-items-start" style="border-left:5px solid">
             <div class="row align-items-center">
                 <div class="col-sm-9">
                     <h4 class="mb-2 text-primary">{{ data_get($branch, 'cafe.name') }}</h4>
@@ -25,7 +25,7 @@
                     </ul>
                 </div>
                 <div class="col-sm-3 h-100">
-                    <a href="" class="btn-block btn-outline-primary btn"><i class="fa fa-chevron-right"></i> Visit</a>
+                    <a href="{{ route('user.cafe.view', ['cafeBranchId' => $branch->id]) }}"  class="btn-block btn-outline-primary btn"><i class="fa fa-chevron-right"></i> Visit</a>
                 </div>
             </div>
         </li>

@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Cafe;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 
 class CafeBranch extends Model
@@ -23,5 +24,26 @@ class CafeBranch extends Model
     public function cafe()
     {
         return $this->belongsTo(Cafe::class);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->with('cafe')
+            ->where(function ($q) use ($search) {
+                $q->where('address', 'LIKE', "%{$search}%")
+                    ->orWhereHas('cafe', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%");
+                    });
+            });
+
+    }
+
+    public function scopeTop($query)
+    {
+        return $query->with('cafe:id,name')
+            ->select('cafe_id', 'cafe_branches.address', 'cafe_branches.id', DB::raw('SUM(cl.credit) AS total_sales'))
+            ->leftJoin('credit_logs AS cl', 'cl.cafe_branch_id', '=', 'cafe_branches.id')
+            ->groupBy('cafe_branches.id')
+            ->orderBy('total_sales', 'DESC');
     }
 }

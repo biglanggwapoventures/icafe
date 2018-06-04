@@ -16,8 +16,13 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ route('super-admin.cafe-admin.index') }}">Cafe Admins</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link">Reports</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Reports
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{{ route('super-admin.reports.top-cafes') }}">Top Cafes</a>
+            </div>
           </li>
         </ul>
         <ul class="navbar-nav ml-auto">
