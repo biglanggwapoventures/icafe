@@ -56,12 +56,24 @@ class User extends Authenticatable
         return $this->hasMany(CreditLog::class, 'client_id');
     }
 
+    public function scopeOfRole($query, $role)
+    {
+        return $query->whereRole($role);
+    }
+
     public function remainingCredits()
     {
-        if ($this->is('user')) {
-            return $this->creditLogs()->sum(DB::raw('credit - debit'));
+        if (!$this->is('user')) {
+            return 0;
         }
 
-        return 0;
+        if ($this->relationLoaded('creditLogs')) {
+            return $this->creditLogs->sum(function ($row) {
+                return $row->credit - $row->debit;
+            });
+        }
+
+        return $this->creditLogs()->sum(DB::raw('credit - debit'));
+
     }
 }

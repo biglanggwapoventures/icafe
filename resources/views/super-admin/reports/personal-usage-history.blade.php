@@ -31,6 +31,7 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>PC #</th>
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th class="text-right">Amount</th>
@@ -40,6 +41,7 @@
                             @forelse($data as $row)
                                 <tr>
                                     <td>{{ $row->client->name }}</td>
+                                    <td>{{ $row->reservation->pc->name }}</td>
                                     <td>{{ date_create($row->reservation_date)->format('m/d/Y h:i a') }}</td>
                                     <td>
                                         {{ date_create_from_format('H:i:s', $row->reservation->reservation_time)->format('h:i a') }}
@@ -49,7 +51,7 @@
                                     <td class="text-right">{{ number_format($row->debit, 2) }}</td>
                                 </tr>
                             @empty
-                                <tr><td colspan="4" class="text-center">{{ request()->branch_id ? 'No data' : 'Select a cafe' }}</td></tr>
+                                <tr><td colspan="5" class="text-center">{{ request()->branch_id ? 'No data' : 'Select a cafe' }}</td></tr>
                             @endforelse
                         </tbody>
                     </table>

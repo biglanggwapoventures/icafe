@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\CafeBranch;
 use App\CreditLog;
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
 
 class ReportsController extends Controller
@@ -48,7 +49,11 @@ class ReportsController extends Controller
 
         if ($request->branch_id) {
             $data = CreditLog::whereCafeBranchId($request->branch_id)
-                ->with(['client:id,name', 'reservation:id,reservation_date,reservation_time,duration_in_hours'])
+                ->with([
+                    'client:id,name',
+                    'reservation:id,reservation_date,reservation_time,duration_in_hours,floor_plan_id',
+                    'reservation.pc:id,name',
+                ])
                 ->where('debit', '>', 0)
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -57,6 +62,19 @@ class ReportsController extends Controller
         return view('super-admin.reports.personal-usage-history', [
             'data' => $data,
             'branches' => $branches,
+        ]);
+    }
+
+    public function usersList()
+    {
+        $data = User::with('creditLogs:client_id,credit,debit')
+            ->select('id', 'name', 'role', 'created_at')
+            ->ofRole('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('super-admin.reports.users-list', [
+            'data' => $data,
         ]);
     }
 }

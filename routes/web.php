@@ -31,13 +31,14 @@ Route::group(['prefix' => 'login', 'namespace' => 'Auth', 'as' => 'login.', 'mid
  * Super admin routes
  */
 Route::group(['namespace' => 'SuperAdmin', 'as' => 'super-admin.', 'prefix' => 'super-admin', 'middleware' => 'auth:superadmin'], function () {
-    Route::view('/', 'super-admin.layout');
+    Route::get('/', 'IndexController');
     Route::resource('cafe', 'CafeController');
     Route::resource('cafe-admin', 'CafeAdminController');
     Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
         Route::get('top-cafes', 'ReportsController@topCafes')->name('top-cafes');
         Route::get('credit-points-list', 'ReportsController@creditPointsList')->name('credit-points-list');
         Route::get('personal-usage-history', 'ReportsController@personalUsageHistory')->name('personal-usage-history');
+        Route::get('users-list', 'ReportsController@usersList')->name('users-list');
     });
 });
 
@@ -45,7 +46,7 @@ Route::group(['namespace' => 'SuperAdmin', 'as' => 'super-admin.', 'prefix' => '
  * Cafe admin routes
  */
 Route::group(['namespace' => 'Admin', 'as' => 'admin.', 'prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
-    Route::view('/', 'admin.layout');
+    Route::get('/', 'FloorLayoutController@index');
     Route::get('floor-layout', 'FloorLayoutController@index')->name('floor-layout');
     Route::post('floor-layout', 'FloorLayoutController@store')->name('floor-layout.create');
     Route::patch('floor-layout', 'FloorLayoutController@update')->name('floor-layout.update');

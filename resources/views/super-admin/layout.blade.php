@@ -24,6 +24,7 @@
               <a class="dropdown-item" href="{{ route('super-admin.reports.top-cafes') }}">Top Cafes</a>
               <a class="dropdown-item" href="{{ route('super-admin.reports.credit-points-list') }}">Credit Points List</a>
               <a class="dropdown-item" href="{{ route('super-admin.reports.personal-usage-history') }}">Personal Usage History</a>
+              <a class="dropdown-item" href="{{ route('super-admin.reports.users-list') }}">List of Users</a>
             </div>
           </li>
         </ul>

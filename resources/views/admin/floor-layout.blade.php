@@ -52,7 +52,7 @@
       </div>
     {!! Form::open(['url' => route('admin.floor-layout.update'), 'method' => 'patch', 'class' => 'ajax']) !!}
       <div class="modal-body">
-            {!! Form::inputGroup('text', 'Name', 'name', null, ['id' => 'pc']) !!}
+            {!! Form::inputGroup('text', 'PC #', 'name', null, ['id' => 'pc']) !!}
             {!! Form::selectGroup('Select pc status', 'status', ['' => '* SELECT *', 'available' => 'Available', 'unavailable' => 'Unavailable', 'removed' => 'Removed'], null) !!}
             {!! Form::hidden('id', null) !!}
       </div>
@@ -115,7 +115,7 @@
             var $this = $('#pc-modal'),
                 name = td.find('span.d-block').text()
             $this.find('.modal-title').html(function () {
-                return 'PC <span class="text-success">' + name + '</span> status';
+                return 'PC # <span class="text-success">' + name + '</span> status';
             });
             $this.find('input[name=id]').val(td.data('pk'))
             $this.modal('show')
