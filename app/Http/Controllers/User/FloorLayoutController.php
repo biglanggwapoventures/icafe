@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\CafeBranch;
+use App\Facades\SMS;
 use App\FloorPlan;
 use App\Http\Controllers\Controller;
 use App\PCReservation;
@@ -80,7 +81,9 @@ class FloorLayoutController extends Controller
         $reservationStart = Carbon::parse($input['reservation_time']);
         $reservationEnd = $reservationStart->addHours($input['duration_in_hours']);
 
-        $pc = FloorPlan::withReservationsOn($input['reservation_date'])->find($input['floor_plan_id']);
+        $pc = FloorPlan::with('cafeBranch.cafe')
+            ->withReservationsOn($input['reservation_date'])
+            ->find($input['floor_plan_id']);
 
         if ($pc->flagConflict($reservationStart, $reservationEnd)) {
             throw ValidationException::withMessages([
@@ -94,6 +97,10 @@ class FloorLayoutController extends Controller
 
         $reservation = PCReservation::create($input);
         $reservation->deductCredits();
+
+        $body = sprintf("PC # %s from %s to %s on %s", $pc->name, $reservationStart->format('h:i a'), $reservationEnd->format('h:i a'), $pc->cafeBranch->cafe->name);
+        $message = new SMS(Auth::user()->contact_number, $body);
+        $message->send();
 
         DB::commit();
 

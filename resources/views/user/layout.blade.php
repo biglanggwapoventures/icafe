@@ -45,8 +45,6 @@
             <dl>
               <dt>Member since</dt>
               <dd>{{ date_create(Auth::user()->created_at)->format('F d, Y h:i A') }}</dd>
-              <dt>Last top up</dt>
-              <dd>n/a</dd>
             </dl>
             <a data-toggle="modal" data-target="#profile-modal" href="#" class="btn btn-outline-primary btn-sm btn-block"><i class="fa fa-pencil"></i> Edit Profile</a>
           </div>

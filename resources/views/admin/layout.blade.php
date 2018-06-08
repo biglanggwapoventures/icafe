@@ -17,10 +17,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.reservation.index') }}">Reservations</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link">Reports</a>
-          </li>
+          </li>r
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown active">
