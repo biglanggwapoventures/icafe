@@ -79,7 +79,7 @@ class FloorLayoutController extends Controller
         ]);
 
         $reservationStart = Carbon::parse($input['reservation_time']);
-        $reservationEnd = $reservationStart->addHours($input['duration_in_hours']);
+        $reservationEnd = $reservationStart->copy()->addHours($input['duration_in_hours']);
 
         $pc = FloorPlan::with('cafeBranch.cafe')
             ->withReservationsOn($input['reservation_date'])
