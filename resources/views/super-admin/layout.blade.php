@@ -22,6 +22,8 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="{{ route('super-admin.reports.top-cafes') }}">Top Cafes</a>
+              <a class="dropdown-item" href="{{ route('super-admin.reports.credit-points-list') }}">Credit Points List</a>
+              <a class="dropdown-item" href="{{ route('super-admin.reports.personal-usage-history') }}">Personal Usage History</a>
             </div>
           </li>
         </ul>

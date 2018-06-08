@@ -36,6 +36,8 @@ Route::group(['namespace' => 'SuperAdmin', 'as' => 'super-admin.', 'prefix' => '
     Route::resource('cafe-admin', 'CafeAdminController');
     Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
         Route::get('top-cafes', 'ReportsController@topCafes')->name('top-cafes');
+        Route::get('credit-points-list', 'ReportsController@creditPointsList')->name('credit-points-list');
+        Route::get('personal-usage-history', 'ReportsController@personalUsageHistory')->name('personal-usage-history');
     });
 });
 

@@ -41,6 +41,11 @@ class CreditLog extends Model
         return $query->with('client:id,name')->latest();
     }
 
+    public function reservation()
+    {
+        return $this->belongsTo(PCReservation::class, 'pc_reservation_id');
+    }
+
     public function scopeOf($query, $userId)
     {
         return $query->whereClientId($userId)
