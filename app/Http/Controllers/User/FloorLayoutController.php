@@ -13,14 +13,59 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Validator;
 
 class FloorLayoutController extends Controller
 {
-    public function index($cafeBranchId)
+    public function index($cafeBranchId, Request $request)
     {
-        $cafeBranch = CafeBranch::select('id', 'address', 'cafe_id')->with('cafe:id,name')->find($cafeBranchId);
-        $coordinates = FloorPlan::of($cafeBranchId)->formattedCoordinates();
-        return view('user.floor-plan', compact('coordinates', 'cafeBranchId', 'cafeBranch'));
+        $cafeBranch = CafeBranch::select('id', 'address', 'cafe_id')
+            ->with('cafe:id,name')
+            ->find($cafeBranchId);
+
+        $query = FloorPlan::of($cafeBranchId);
+
+        $validator = Validator::make($request->all(), [
+            'reservation_date' => 'required|date|after_or_equal:today',
+            'reservation_time' => 'required|date_format:H:i',
+            'duration_in_hours' => ['required', 'numeric' /*, new MinHalfHour, 'min:1', new CreditBalance*/],
+        ]);
+
+        // set defaults
+        $reservationDate = date('Y-m-d');
+        $reservationTime = date('H:i');
+        $duration = 0;
+
+        // change params
+        if ($validator->passes()) {
+            $reservationDate = $request->reservation_date;
+            $reservationTime = $request->reservation_time;
+            $duration = $request->duration_in_hours;
+        }
+
+        // dd()
+
+        $data = $query->withReservationsOn($reservationDate)
+            ->get()
+            ->each(function ($pc) use ($reservationTime, $duration) {
+                $pc->conflicts = $pc->flagConflict(
+                    Carbon::parse($reservationTime),
+                    Carbon::parse($reservationTime)->addHours($duration)
+                );
+            })
+            ->groupBy('y')
+            ->mapWithKeys(function ($xCoords, $yValue) {
+                return [$yValue => $xCoords->keyBy('x')];
+            });
+
+        return view('user.floor-plan', [
+            'coordinates' => $data,
+            'cafeBranchId' => $cafeBranchId,
+            'cafeBranch' => $cafeBranch,
+            'reservationDate' => $reservationDate,
+            'reservationTime' => $reservationTime,
+            'duration' => $duration,
+        ]);
     }
 
     public function reserve($cafeBranchId, Request $request)
@@ -35,7 +80,9 @@ class FloorLayoutController extends Controller
         $reservationStart = Carbon::parse($input['reservation_time']);
         $reservationEnd = $reservationStart->addHours($input['duration_in_hours']);
 
-        if (PCReservation::hasConflict($input['reservation_date'], $reservationStart, $reservationEnd)) {
+        $pc = FloorPlan::withReservationsOn($input['reservation_date'])->find($input['floor_plan_id']);
+
+        if ($pc->flagConflict($reservationStart, $reservationEnd)) {
             throw ValidationException::withMessages([
                 'reservation_time' => ['Conflict'],
             ]);

@@ -4,6 +4,7 @@ namespace App;
 
 use App\CafeBranch;
 use App\PCReservation;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,8 +59,35 @@ class FloorPlan extends Model
         return $this->reservations()->whereReservationDate(DB::raw('CURDATE()'));
     }
 
+    public function scopeWithReservationsOn($query, $date)
+    {
+        return $query->with(['reservations' => function ($q) use ($date) {
+            $q->where('reservation_date', $date);
+        }]);
+    }
+
     public function cafeBranch()
     {
         return $this->belongsTo(CafeBranch::class, 'cafe_branch_id');
+    }
+
+    public function flagConflict(Carbon $requestStart, Carbon $requestEnd)
+    {
+        $conflicts = $this->reservations->filter(function ($item) use ($requestStart, $requestEnd) {
+
+            $start = Carbon::parse($item->reservation_time);
+            $end = $start->copy()->addHours($item->duration_in_hours);
+
+            return $requestStart->between($start, $end) || $requestEnd->between($start, $end);
+        });
+
+        // $this->conflicts = $conflicts->isNotEmpty();
+
+        return $conflicts->isNotEmpty();
+    }
+
+    public function is($status)
+    {
+        return $this->status === strtolower($status);
     }
 }
