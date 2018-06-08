@@ -24,8 +24,8 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>
-                        <p class="lead mb-0">PC {{ $row->cafe->name }}</p>
-                        <small class="d-block mb-0">{{ $row->address }}</small>
+                        <p class="lead mb-0">PC {{ $branches->get($row->id)->cafe->name }}</p>
+                        <small class="d-block mb-0">{{ $branches->get($row->id)->address }}</small>
                     </td>
                     <td>
                         <p class="lead mb-0 text-right">

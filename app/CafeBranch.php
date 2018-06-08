@@ -38,12 +38,14 @@ class CafeBranch extends Model
 
     }
 
-    public function scopeTop($query)
+    public static function top()
     {
-        return $query->with('cafe:id,name')
-            ->select('cafe_id', 'cafe_branches.address', 'cafe_branches.id', DB::raw('SUM(cl.credit) AS total_sales'))
+        $top = self::select(DB::raw('SUM(cl.credit) AS total_sales'), 'cafe_branches.id')
             ->leftJoin('credit_logs AS cl', 'cl.cafe_branch_id', '=', 'cafe_branches.id')
             ->groupBy('cafe_branches.id')
-            ->orderBy('total_sales', 'DESC');
+            ->orderBy('total_sales', 'DESC')
+            ->get();
+
+        return $top;
     }
 }

@@ -27,6 +27,7 @@
         <ul class="list-inline mt-3 mb-3 clearfix">
             <li class="list-inline-item"><strong>Legend:</strong></li>
               <li class="list-inline-item text-success"><i class="fa fa-desktop"></i> Available</li>
+              <li class="list-inline-item text-warning"><i class="fa fa-desktop"></i> Reserved</li>
               <li class="list-inline-item text-danger"><i class="fa fa-desktop"></i> Unavailable</li>
               <li class="list-inline-item float-right">Click on a computer to view reservations</li>
         </ul>
@@ -40,17 +41,19 @@
                     <tr data-y="{{ $row }}">
                         @foreach(range(1,20) AS $column)
                             @php $pc = optional($coordinates->get($row))->get($column) @endphp
-                            <td
-                                data-status="{{ optional($pc)->status }}"
-                                data-number="{{ optional($pc)->name }}"
-                                data-x="{{ $column }}"
-                                data-pk="{{ optional($pc)->id }}"
-                                class="{{ optional($pc)->status === 'unavailable' ? 'text-danger' : 'text-success' }} reserve">
-                                @if($pc)
+                            @if($pc && $pc->is('unavailable'))
+                                <td class="text-danger">
                                     <span class="d-block">{{ $pc->name }}</span>
                                     <i class="fa fa-desktop"></i>
-                                @endif
-                            </td>
+                                </td>
+                            @elseif($pc && $pc->is('available'))
+                                <td data-status="{{ $pc->status }}" data-name="{{ $pc->name }}" data-pk="{{ $pc->id }}" class="{{ $pc->conflicts ? 'text-warning' : 'text-success' }} reserve" data-conflicts="{{ intval($pc->conflicts) }}">
+                                    <span class="d-block">{{ $pc->name }}</span>
+                                    <i class="fa fa-desktop"></i>
+                                </td>
+                            @else
+                                <td></td>
+                            @endif
                         @endforeach
                     </tr>
                 @endforeach

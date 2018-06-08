@@ -9,9 +9,12 @@ class ReportsController extends Controller
 {
     public function topCafes()
     {
-        $data = CafeBranch::top()->get();
+
+        $data = CafeBranch::top();
+        $branches = CafeBranch::with('cafe:id,name')->get()->keyBy('id');
         return view('super-admin.reports.top-cafes', [
             'data' => $data,
+            'branches' => $branches,
         ]);
     }
 }
